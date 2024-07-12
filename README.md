@@ -1,16 +1,52 @@
-### Hi there 👋
+import { AfterViewInit, Component, OnInit } from '@angular/core';
 
-<!--
-**IzuharuS/IzuharuS** is a ✨ _special_ ✨ repository because its `README.md` (this file) appears on your GitHub profile.
+@Component({
+  selector: 'app-root',
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss']
+})
+export class AppComponent implements OnInit, AfterViewInit {
+  currentIndex = 0;
+  startX = 0;
+  currentX = 0;
+  isDragging = false;
+  cards: number [] = [];
+  
+  ngOnInit() {
+    this.cards = [];
+  }
 
-Here are some ideas to get you started:
+  ngAfterViewInit() {
+    this.cards = [];
+    this.cards.push(1);
+    this.cards.push(2);
+    this.cards.push(3);
+  }
 
-- 🔭 I’m currently working on ...
-- 🌱 I’m currently learning ...
-- 👯 I’m looking to collaborate on ...
-- 🤔 I’m looking for help with ...
-- 💬 Ask me about ...
-- 📫 How to reach me: ...
-- 😄 Pronouns: ...
-- ⚡ Fun fact: ...
--->
+  get transformStyle() {
+    const offset = (-this.currentIndex * 100) / this.cards.length;
+    return `translateX(${offset}%)`;
+  }
+
+  onTouchStart(event: TouchEvent) {
+    this.startX = event.touches[0].clientX;
+    this.isDragging = true;
+  }
+
+  onTouchMove(event: TouchEvent) {
+    if (!this.isDragging) return;
+    this.currentX = event.touches[0].clientX;
+  }
+
+  onTouchEnd() {
+    if (!this.isDragging) return;
+    const diffX = this.startX - this.currentX;
+    if (diffX > 50 && this.currentIndex < this.cards.length - 1) {
+      this.currentIndex++;
+    } else if (diffX < -50 && this.currentIndex > 0) {
+      this.currentIndex--;
+    }
+    this.isDragging = false;
+  }
+}
+
